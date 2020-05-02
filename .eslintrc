@@ -1,0 +1,15 @@
+{
+  "extends": "eslint-config-egg",
+  "rules": {
+    "arrow-parens": "off",
+    "no-trailing-spaces": "off",
+    "no-unused-vars": "warn",
+    "comma-dangle": "off",
+    "semi": "off",
+    "dot-notation": "off",
+    "prefer-const": "off",
+    "strict": "off",
+    "no-empty-function": "off",
+    "array-bracket-spacing": "off"
+  }
+}
