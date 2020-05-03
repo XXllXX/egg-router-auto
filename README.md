@@ -30,7 +30,7 @@ Description here.
 
 ```js
 // config/plugin.js
-exports.routerDoc = {
+exports.routerAuto = {
   enable: true,
   package: 'egg-router-auto',
 }
@@ -43,7 +43,7 @@ exports.routerDoc = {
 //  ''   => /home
 // 'api' => /api/home
 // 'test' => /test/home
-exports.routerDoc = {
+exports.routerAuto = {
   baseApi: '',
 }
 
@@ -65,6 +65,9 @@ exports.routerDoc = {
 
 // 生成 get 请求  /home/text
 @param {get} index  text
+
+// 生成带参数
+@param {delete} delete111 del/:id
 ```
 
 ```
@@ -74,16 +77,15 @@ const Controller = require('egg').Controller;
 /**
  * 首页
  * @controller home
- * @param {get} index
+ * @param {get} index :id
  * @param {post} post
- * @param {delete} delete111 del
+ * @param {delete} delete111 del/:id
  */
 class HomeController extends Controller {
 
    async index() {
     const { ctx } = this
-    await ctx.model.User.create({ email: '121212' })
-    ctx.body = 'hi, home index'
+    ctx.body = `hi,  ${ctx.params.id}`
   }
 
   async post() {
@@ -93,7 +95,7 @@ class HomeController extends Controller {
 
   async delete111() {
     const { ctx } = this
-    ctx.body = 'hi, home delete111'
+    ctx.body = `delete, home  ${ctx.params.id}`
   }
 
 }

@@ -1,7 +1,7 @@
 {
   "name": "egg-router-auto",
-  "version": "1.0.0",
-  "description": "更加注释生成路由",
+  "version": "1.0.1",
+  "description": "根据JsDoc生成简单的路由",
   "eggPlugin": {
     "name": "routerAuto"
   },
