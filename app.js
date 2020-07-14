@@ -20,7 +20,9 @@ module.exports = (app) => {
     routerData.forEach((t) => {
       let action = getObject(controller, t.eggPath)
 
-      let path = routerPath(baseApi, t.path, t.controller)
+      // let path = routerPath(baseApi, t.path, t.controller)
+      let path = routerPath(...t.eggPath)
+
       let methodPath = t.eggPath.join('.')
       let flag = true
       t.router.forEach((item) => {
@@ -31,7 +33,9 @@ module.exports = (app) => {
             )
           }
           // 路由地址
-          let tempPath = routerPath(path, item.action)
+          // let tempPath = routerPath(path, item.action)
+          let tempPath = routerPath(baseApi, t.controller, item.action)
+
           if (
             app.routerData.find(
               (e) => item.type === e.type && e.router === tempPath
@@ -57,7 +61,7 @@ module.exports = (app) => {
           }
         } else {
           app.logger.warn(
-            `[egg-router-auto] ${t.path} 文件中未找到 ${item.method}方法`
+            `[egg-router-auto] controller${path} 文件中未找到 ${item.method}方法`
           )
         }
         flag = false

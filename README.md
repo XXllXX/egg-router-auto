@@ -30,23 +30,32 @@ Description here.
 
 ```js
 // config/plugin.js
-exports.routerAuto = {
-  enable: true,
-  package: 'egg-router-auto',
+module.exports = {
+  // ...
+  routerAuto: {
+    enable: true,
+    package: 'egg-router-auto',
+  },
+  // ...
 }
 ```
 
 ## 详细配置
 
-```
-// 路由生成基本路径
-//  ''   => /home
-// 'api' => /api/home
-// 'test' => /test/home
-exports.routerAuto = {
-  baseApi: '',
-}
+```js
+// config/plugin.js
 
+module.exports = (appInfo) => {
+  const config = (exports = {})
+
+  // 路由生成基本路径
+  //  ''   => /home
+  // 'api' => /api/home
+  // 'test' => /test/home
+  config.routerAuto = {
+    baseApi: 'api',
+  }
+}
 ```
 
 ## 使用
@@ -119,7 +128,7 @@ module.exports = (app) => {
 
 ## 提问交流
 
-请到 [egg issues](https://github.com/eggjs/egg/issues) 异步交流。
+请到 [egg issues](https://github.com/XXllXX/egg-router-auto/issues) 异步交流。
 
 ## License
 
