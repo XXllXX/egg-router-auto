@@ -1,6 +1,6 @@
 {
   "name": "egg-router-auto",
-  "version": "1.0.2",
+  "version": "2.0.0",
   "description": "根据JsDoc生成简单的路由",
   "eggPlugin": {
     "name": "routerAuto"
@@ -14,7 +14,10 @@
     "egg-auto"
   ],
   "dependencies": {
-    "doctrine": "^3.0.0"
+    "doctrine": "^3.0.0",
+    "gulp": "^4.0.2",
+    "through2": "^4.0.2",
+    "vinyl": "^2.2.0"
   },
   "devDependencies": {
     "autod": "^3.0.1",
@@ -31,6 +34,7 @@
   },
   "scripts": {
     "test": "npm run lint -- --fix && egg-bin pkgfiles && npm run test-local",
+    "test-gulp": "node lib/index.n.js",
     "test-local": "egg-bin test",
     "cov": "egg-bin cov",
     "lint": "eslint .",
@@ -39,7 +43,8 @@
     "autod": "autod"
   },
   "files": [
-    "lib/index.js",
+    "lib/index.n.js",
+    "lib/task.js",
     "lib/doc.js",
     "app.js",
     "agent.js",

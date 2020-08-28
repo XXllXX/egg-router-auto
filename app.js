@@ -1,70 +1,69 @@
-const { path, readFilesSync, getObject, routerPath } = require('./lib')
+const { getObject, routerPath } = require('./lib')
+const routerAuto = require('./lib/index.n.js')
+const path = require('path')
 /**
  * start
  * @param {EggApplication} app 实例
  */
 module.exports = (app) => {
   const { baseDir } = app
+  // controller 目录
   const applicationDir = path.join(baseDir, 'app', 'controller')
-  let routerData = readFilesSync(applicationDir)
-  app.routerDoc = routerData || []
+  // 路由数据
+  app.routerData = []
 
   /**
    * 异步
    */
   app.beforeStart(async () => {
     const { router, controller } = app
+    // 插件配置
     let { baseApi } = app.config.routerAuto
-    app.routerData = []
 
-    routerData.forEach((t) => {
-      let action = getObject(controller, t.eggPath)
-
-      // let path = routerPath(baseApi, t.path, t.controller)
-      let path = routerPath(...t.eggPath)
-
-      let methodPath = t.eggPath.join('.')
-      let flag = true
-      t.router.forEach((item) => {
-        if (action && action[item.method]) {
-          if (flag) {
-            app.logger.info(
-              `[egg-router-auto] ---------------------- Load ${methodPath} controller file----------------------`
-            )
-          }
-          // 路由地址
-          // let tempPath = routerPath(path, item.action)
-          let tempPath = routerPath(baseApi, t.controller, item.action)
-
+    routerAuto(path.join(applicationDir, '**/*.js'), function (data) {
+      let relative = path.relative(applicationDir, data.dirname)
+      let pathList = []
+      if (relative !== '') pathList = relative.split(path.sep)
+      pathList.push(data.fileName)
+      let controllerClass = getObject(controller, pathList)
+      if (!controllerClass) return
+      app.logger.info(
+        `[egg-router-auto] ---------------------- Load ${pathList.join(
+          '.'
+        )} controller file----------------------`
+      )
+      data.routers.forEach((item) => {
+        if (controllerClass[item.method]) {
+          let methodPath = [...pathList, item.method]
+          let tempRouter = routerPath(baseApi, data.controller, item.action)
           if (
             app.routerData.find(
-              (e) => item.type === e.type && e.router === tempPath
+              (e) => item.type === e.type && e.router === tempRouter
             )
           ) {
             app.logger.warn(
               `[egg-router-auto] 未能加载 ${methodPath}.${
                 item.method
-              } 方法，已经存在相同请求的路由: ${item.type.toUpperCase()} ${tempPath} `
+              } 方法，已经存在相同请求的路由: ${item.type.toUpperCase()} ${tempRouter} `
             )
           } else {
             app.routerData.push({
               type: item.type,
-              router: tempPath,
+              router: tempRouter,
               method: item.method,
             })
-            router[item.type](tempPath, action[item.method])
+            router[item.type](tempRouter, controllerClass[item.method])
             app.logger.info(
-              `[egg-router-auto] ${item.type.toUpperCase()} ${tempPath} => controller.${methodPath}.${
+              `[egg-router-auto] ${item.type.toUpperCase()} ${tempRouter} => controller.${methodPath}.${
                 item.method
               }`
             )
           }
         } else {
           app.logger.warn(
-            `[egg-router-auto] controller${path} 文件中未找到 ${item.method}方法`
+            `[egg-router-auto] controller ${relative} 文件中未找到 ${item.method}方法`
           )
         }
-        flag = false
       })
     })
   })
