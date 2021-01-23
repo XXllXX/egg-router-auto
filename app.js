@@ -18,7 +18,7 @@ module.exports = (app) => {
   app.beforeStart(async () => {
     const { router, controller } = app
     // 插件配置
-    let { baseApi } = app.config.routerAuto
+    let { baseApi } = app.config.routerAuto || { baseApi: '' }
 
     routerAuto(path.join(applicationDir, '**/*.js'), function (data) {
       let relative = path.relative(applicationDir, data.dirname)
@@ -42,9 +42,9 @@ module.exports = (app) => {
             )
           ) {
             app.logger.warn(
-              `[egg-router-auto] 未能加载 ${methodPath}.${
-                item.method
-              } 方法，已经存在相同请求的路由: ${item.type.toUpperCase()} ${tempRouter} `
+              `[egg-router-auto] 未能加载 ${methodPath.join(
+                '.'
+              )} 方法，已经存在相同请求的路由: ${item.type.toUpperCase()} ${tempRouter} `
             )
           } else {
             app.routerData.push({
@@ -54,9 +54,9 @@ module.exports = (app) => {
             })
             router[item.type](tempRouter, controllerClass[item.method])
             app.logger.info(
-              `[egg-router-auto] ${item.type.toUpperCase()} ${tempRouter} => controller.${methodPath}.${
-                item.method
-              }`
+              `[egg-router-auto] ${item.type.toUpperCase()} ${tempRouter} => controller.${methodPath.join(
+                '.'
+              )}`
             )
           }
         } else {
